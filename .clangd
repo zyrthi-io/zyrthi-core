@@ -1,0 +1,9 @@
+# zyrthi-core/.clangd
+CompileFlags:
+  Add:
+    - -std=c99                  # 通用 C99 标准
+    - -Iinclude                 # Core 自身头文件路径
+    - -I../zyrthi-hal/include   # 依赖 HAL 头文件（相对路径）
+  Remove:
+    - -Werror
+# 只依赖 HAL 抽象接口，无芯片专属参数
