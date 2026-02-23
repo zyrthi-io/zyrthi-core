@@ -1,43 +1,29 @@
-# zyrthi-core/Makefile
-# 纯跨平台框架：仅依赖通用 HAL 接口，无芯片相关配置
-HAL_DIR ?= ../zyrthi-hal
-BUILD_DIR ?= build
-
-CC ?= clang
+# zyrthi/core/Makefile
+# 编译器与编译选项
+CC ?= gcc
 AR ?= ar
-# 通用编译参数（无芯片专属参数）
-CFLAGS ?= -std=c99 -Wall -Wextra -Iinclude -I$(HAL_DIR)/include -fPIC
-# 仅链接通用 HAL 空库
-LDFLAGS ?= -L$(HAL_DIR)/build -lzyrthi-hal
-ARFLAGS ?= rcs
+CFLAGS ?= -Wall -Wextra -std=c99 -Os
 
-# Core 层源文件（纯框架逻辑）
-SRC = src/core.c
-OBJ = $(addprefix $(BUILD_DIR)/, $(SRC:.c=.o))
-TARGET = $(BUILD_DIR)/libzyrthi-core.a
+# 头文件路径（Core 自身 include + HAL 层 include）
+INC_DIRS = include \
+           ../hal/include
 
-# 默认目标：编译通用 HAL + Core
-all: mkdir_build build_hal $(TARGET)
+# 源文件（简化层级，直接引用 src 下的 .c）
+SRC_FILES = src/core.c \
+            src/helper.c \
 
-# 编译通用 HAL（空库）
-build_hal:
-	$(MAKE) -C $(HAL_DIR) all
+# 目标静态库
+TARGET = libzyrthi-core.a
 
-# 创建 build 目录
-mkdir_build:
-	@mkdir -p $(BUILD_DIR)/src
+# 编译规则
+all: $(TARGET)
 
-# 编译 Core 静态库
-$(TARGET): $(OBJ)
-	$(AR) $(ARFLAGS) $@ $^
+$(TARGET): $(SRC_FILES)
+	# 编译所有 .c 为 .o 文件
+	$(CC) $(CFLAGS) -I$(INC_DIRS) -c $(SRC_FILES)
+	# 打包为静态库
+	$(AR) rcs $(TARGET) *.o
 
-# 编译 .c 为 .o
-$(BUILD_DIR)/%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-# 清理
+# 清理编译产物
 clean:
-	rm -rf $(BUILD_DIR) src/*.o
-	$(MAKE) -C $(HAL_DIR) clean
-
-.PHONY: all clean mkdir_build build_hal
+	rm -f $(TARGET) *.o

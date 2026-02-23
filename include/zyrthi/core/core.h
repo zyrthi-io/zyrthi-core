@@ -37,11 +37,12 @@ __attribute__((weak)) core_status_t zyrthi_system_init(void);
 
 /**
  * @brief 用户初始化函数（Arduino 风格）
- * @note 1. 弱符号定义，用户必须重写（默认空实现）；
+ * @return core_status_t: 初始化状态码（SYS_OK 成功，其他为错误码）
+ * @note 1. 弱符号定义，用户可重写（默认返回 SYS_OK）；
  *       2. 执行时机：zyrthi_system_init() 成功后，loop() 执行前，仅执行一次；
  *       3. 用于用户自定义初始化（如 GPIO/UART/I2C 配置）。
  */
-__attribute__((weak)) void setup(void);
+__attribute__((weak)) core_status_t setup(void);
 
 /**
  * @brief 用户主循环函数（Arduino 风格）

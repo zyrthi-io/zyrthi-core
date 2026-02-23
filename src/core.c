@@ -10,12 +10,9 @@
 // ==========================
 // 弱符号：用户初始化空实现（用户可重写）
 // ==========================
-/**
- * @brief setup 空实现（弱符号）
- * @note 用户未重写时，执行空逻辑，不影响框架运行
- */
-__attribute__((weak)) void setup(void) {
-    // 默认空初始化：用户未实现时，无任何操作
+// 弱符号：用户初始化空实现
+__attribute__((weak)) core_status_t setup(void) {
+    return SYS_OK; // 默认返回成功
 }
 
 // ==========================
@@ -49,32 +46,26 @@ __attribute__((weak)) core_status_t zyrthi_system_init(void) {
 // ==========================
 // 核心框架入口函数（封装完整执行流程）
 // ==========================
-/**
- * @brief Core 层核心入口函数
- * @return core_status_t: 执行状态码
- *         - SYS_OK：初始化成功（进入 loop 无限循环，永不返回）
- *         - 其他值：系统初始化失败（直接返回错误码）
- * @note 1. 封装完整流程：系统初始化 → 用户 setup → 无限 loop；
- *       2. 初始化失败时，不执行 setup/loop，直接返回错误码；
- *       3. 初始化成功后，进入 loop 无限循环，永不返回。
- */
+// 核心框架入口函数（封装完整执行流程）
 core_status_t zyrthi_core_run(void) {
-    // 第一步：执行系统初始化（外设级）
+    // 第一步：执行系统初始化，检查是否成功
     core_status_t init_ret = zyrthi_system_init();
-    // 初始化失败：直接返回错误码，不执行后续逻辑
     if (init_ret != SYS_OK) {
-        return init_ret;
+        return init_ret; // 初始化失败，直接返回错误码
     }
 
-    // 第二步：执行用户自定义初始化（仅初始化成功后执行）
-    setup();
+    // 第二步：执行用户自定义初始化，新增状态检查
+    core_status_t setup_ret = setup();
+    if (setup_ret != SYS_OK) {
+        return setup_ret; // setup 失败，终止流程
+    }
 
     // 第三步：进入用户主循环（无限执行，永不返回）
     while (1) {
         loop();
     }
 
-    // 理论上不会执行到这里（loop 是无限循环）
+    // 理论上不会执行到这里
     return SYS_OK;
 }
 
