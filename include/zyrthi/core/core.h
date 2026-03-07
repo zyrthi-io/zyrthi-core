@@ -1,5 +1,5 @@
 /**
- * @file zyrthi_core_core.h
+ * @file core.h
  * @brief ZYRTHI Core 层核心接口（Arduino 风格封装）
  * @note 1. 封装「系统初始化+用户setup+用户loop」的核心执行流程；
  *       2. 弱符号接口支持用户重写，兼顾通用性和芯片专属定制；
@@ -9,9 +9,9 @@
 #define ZYRTHI_CORE_CORE_H
 
 // ==========================
-// 规范1：统一使用 HAL 层类型定义（移除重复的 stdint/stdbool）
+// 规范1：统一使用 HAL 层类型定义
 // ==========================
-#include "zyrthi/hal/zyrthi_hal.h"
+#include "zyrthi_hal.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,7 +20,6 @@ extern "C" {
 // ==========================
 // Core 层专属状态码（复用 HAL 系统状态码，避免冗余）
 // ==========================
-// 核心层初始化状态复用 sys_status_t，无需新增冗余枚举
 typedef sys_status_t core_status_t;
 
 // ==========================

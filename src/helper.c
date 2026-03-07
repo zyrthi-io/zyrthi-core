@@ -1,3 +1,7 @@
+/**
+ * @file helper.c
+ * @brief ZYRTHI Core 层辅助函数实现
+ */
 #include "zyrthi/core/helper.h"
 
 i2c_result_t helper_i2c_transfer(i2c_hdl_t hdl, u8_t addr, 
@@ -9,17 +13,17 @@ i2c_result_t helper_i2c_transfer(i2c_hdl_t hdl, u8_t addr,
     i2c_status_t begin_ret = i2c_begin(hdl, addr);
     if (begin_ret != I2C_OK) {
         ret.status = begin_ret;
-        ret.value = 0;
+        ret.actual_len = 0;
         return ret;
     }
 
     // 2. 调用 HAL 原子接口：发送数据
     if (tx_buf != NULL && tx_len > 0) {
-        i2c_status_t write_ret = i2c_write(hdl, tx_buf, tx_len);
-        if (write_ret != I2C_OK) {
+        i2c_result_t write_ret = i2c_write(hdl, tx_buf, tx_len);
+        if (write_ret.status != I2C_OK) {
             i2c_end(hdl);
-            ret.status = write_ret;
-            ret.value = 0;
+            ret.status = write_ret.status;
+            ret.actual_len = 0;
             return ret;
         }
     }
@@ -30,10 +34,10 @@ i2c_result_t helper_i2c_transfer(i2c_hdl_t hdl, u8_t addr,
         if (read_ret.status != I2C_OK) {
             i2c_end(hdl);
             ret.status = read_ret.status;
-            ret.value = 0;
+            ret.actual_len = 0;
             return ret;
         }
-        ret.value = read_ret.value;
+        ret.actual_len = read_ret.actual_len;
     }
 
     // 4. 调用 HAL 原子接口：结束传输

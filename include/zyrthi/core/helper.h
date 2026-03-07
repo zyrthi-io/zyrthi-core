@@ -1,6 +1,11 @@
-#ifndef ZYRTHI_CORE_I2C_HELPER_H
-#define ZYRTHI_CORE_I2C_HELPER_H
+/**
+ * @file helper.h
+ * @brief ZYRTHI Core 层辅助函数
+ */
+#ifndef ZYRTHI_CORE_HELPER_H
+#define ZYRTHI_CORE_HELPER_H
 
+#include <stddef.h>
 #include "zyrthi/hal/i2c.h"
 
 #ifdef __cplusplus

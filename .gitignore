@@ -1,0 +1,7 @@
+# Build artifacts
+build/
+*.o
+*.a
+
+# IDE
+.clangd/
