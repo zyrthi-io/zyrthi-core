@@ -1,0 +1,13 @@
+name: zyrthi/core
+version: "0.1.0"
+description: Core library for zyrthi embedded framework
+license: MIT
+
+platform: any
+board: any
+
+dependencies:
+  zyrthi/hal: ">=0.1.0"
+
+include: include
+src: src
